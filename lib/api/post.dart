@@ -11,6 +11,8 @@ GetPost(String postId)async{
   return post;
 }
 
-GetPostListAPI({String? sort = "new"})async{
-  await apiService.get(HTTPConstants.GET_POST_LIST,{'sort':sort});
+Future<List<Post>> GetPostListAPI({String? sort = "new",offset =0,limit = 10})async{
+  return (await apiService.get(HTTPConstants.GET_POST_LIST,{'sort':sort,'offset':offset,'limit':limit}) as List).map((item){
+    return Post.fromJson(item);
+  }).toList();
 }

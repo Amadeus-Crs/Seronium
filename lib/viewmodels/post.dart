@@ -21,14 +21,14 @@ class Post {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      id: json['id'],
-      userId: json['user_id'],
-      title: json['title'],
-      content: json['content'],
-      type: json['type'],
-      status: json['status'],
-      viewCount: json['view_count'] ?? 0,
-      createdAt: DateTime.parse(json['created_at']),
+      id: json['ID'],
+      userId: json['UserID'],
+      title: json['Title'],
+      content: json['Content'],
+      type: json['Type'],
+      status: json['Status'],
+      viewCount: json['ViewCount'] ?? 0,
+      createdAt: DateTime.parse(json['CreatedAt']),
     );
   }
 }

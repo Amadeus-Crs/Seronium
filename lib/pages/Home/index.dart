@@ -24,23 +24,29 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loadPosts();
     _initUser();
+    _loadPosts();
+
   }
   final Usercontroller _userController = Get.put(Usercontroller());
-  _initUser()async{
+  _initUser() async {
+  try {
     tokenManager.init();
-    if(tokenManager.getToken().isNotEmpty){
-      _userController.updateUser(await GetUserProfileAPI());
+    if (tokenManager.getToken().isNotEmpty) {
+      final user = await GetUserProfileAPI();
+      _userController.updateUser(user);
     }
+  } catch (e) {
+    debugPrint("获取用户资料失败: $e");
   }
-  Future<void> _loadPosts()async{
+}
+
+Future<void> _loadPosts() async {
     setState(() => loading = true);
     try {
-      final data = await GetPostListAPI(sort: "hot");
-      posts = data.map((e) => Post.fromJson(e)).toList();
+      final posts = await GetPostListAPI(sort: "hot");
     } catch (e) {
-      
+      // ignore
     }
     setState(() => loading = false);
   }
