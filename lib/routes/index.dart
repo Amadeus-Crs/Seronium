@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seronium_flutter/pages/Login/index.dart';
+import 'package:seronium_flutter/pages/Profile/index.dart';
 
 
 final router = GoRouter(
@@ -70,12 +71,6 @@ class HomeShell extends StatelessWidget {
   void _onNavTap(BuildContext context, int index) {
     if (index == 0) context.go('/home');
     if (index == 1) context.go('/create');
-    if (index == 2) {
-      if(Token!=null){
-        context.go('/profile');
-      }else{
-        context.go('/login');
-      };
-  }
+    if (index == 2) context.go('/profile');
 }
 }

@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seronium_flutter/api/login.dart';
+import 'package:seronium_flutter/stores/UserController.dart';
 import 'package:seronium_flutter/utils/SQLInjectionPattern.dart';
 import 'package:seronium_flutter/utils/ToastUtils.dart';
 
@@ -16,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _accountController = TextEditingController(); 
   TextEditingController _passwordController = TextEditingController(); 
+  final Usercontroller _usercontroller = Get.find();
   Widget _buildAccountTextField() {
     return TextFormField(
       validator: (value){
@@ -71,10 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 _login()async{
   try{
-    await LoginAPI({
+    final res = await LoginAPI({
     "account":_accountController.text,
     "password":_passwordController.text
   });
+  _usercontroller.updateUser(res);
   ToastUtils.showToast(context, "登录成功");
   context.go('/home');
   }catch(e){
