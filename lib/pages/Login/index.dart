@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:seronium_flutter/api/login.dart';
 import 'package:seronium_flutter/stores/TokenManager.dart';
 import 'package:seronium_flutter/stores/UserController.dart';
+import 'package:seronium_flutter/utils/Joke.dart';
 import 'package:seronium_flutter/utils/SQLInjectionPattern.dart';
 import 'package:seronium_flutter/utils/ToastUtils.dart';
 
@@ -136,18 +137,14 @@ _login()async{
               TextSpan(
                 text: "《隐私政策》",
                 style: TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  context.go('/joke');
-                },
+                recognizer: TapGestureRecognizer()..onTap = JokeURL
               ),
               
               TextSpan(text: "和"),
               TextSpan(
                 text: "《用户协议》",
                 style: TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()..onTap = () {
-                  context.go('/joke');
-                },
+                recognizer: TapGestureRecognizer()..onTap = JokeURL
               ),
             ],
           ),

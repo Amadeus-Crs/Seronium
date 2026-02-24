@@ -7,11 +7,11 @@ Future<User> LoginAPI(Map<String,dynamic> data) async {
       await apiService.post(HTTPConstants.LOGIN,data)
     );
     return user;
-  }
+}
 
-  Future<User> GetUserProfileAPI() async {
+Future<User> GetUserProfileAPI() async {
     User user = User.fromJson(
       await apiService.get(HTTPConstants.GET_USER_PROFILE,{})
     );
     return user;
-  }
+}

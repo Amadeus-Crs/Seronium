@@ -2,9 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:seronium_flutter/constants/index.dart';
 import 'package:seronium_flutter/stores/TokenManager.dart';
 
-class Apiservice {
+class ApiService {
   static final Dio _dio = Dio();
-  Apiservice(){
+  ApiService(){
     _dio.options
       ..baseUrl = GlobalConstants.BASE_URL
       ..connectTimeout = Duration(seconds: GlobalConstants.TIME_OUT)
@@ -13,7 +13,7 @@ class Apiservice {
       _addInterceptors();
   }
   Future<dynamic> get(String url , Map<String,dynamic>? params){
-    return _handleResponse(_dio.get(url,queryParameters: params));
+    return _handleResponse(_dio.get(url,queryParameters: params??{}));
   }
   Future<dynamic> post(String url , Map<String,dynamic>? data){
     return _handleResponse(_dio.post(url,data: data));
@@ -54,4 +54,4 @@ class Apiservice {
   }
 }
 
-final apiService = Apiservice();
+final apiService = ApiService();

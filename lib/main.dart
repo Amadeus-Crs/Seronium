@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seronium_flutter/routes/index.dart';
 import 'package:seronium_flutter/utils/Theme.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await ApiService.init();
   runApp(const ProviderScope(child: SeroniumApp()));
 }
 

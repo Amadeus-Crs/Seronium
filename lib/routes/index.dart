@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:seronium_flutter/pages/Home/index.dart';
 import 'package:seronium_flutter/pages/Login/index.dart';
+import 'package:seronium_flutter/pages/Post/create.dart';
+import 'package:seronium_flutter/pages/Post/detail.dart';
 import 'package:seronium_flutter/pages/Profile/index.dart';
 
 
@@ -8,13 +11,13 @@ final router = GoRouter(
   initialLocation: '/home',
   routes: [
     GoRoute(path: '/login', builder: (_, __) =>  LoginScreen()),
-    GoRoute(path:'/joke', builder: (_, __) => const JokeScreen()),
+    // GoRoute(path:'/joke', builder: (_, __) => const JokeScreen()),
     ShellRoute(
       builder: (context, state, child) => HomeShell(child: child),
       routes: [
         GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
         GoRoute(path: '/create', builder: (_, __) => const CreatePostScreen()),
-        GoRoute(path: '/post/:id', builder: (_, state) => PostDetailScreen()),
+        GoRoute(path: '/post/:id', builder: (_, state) => PostDetailScreen(postId: state.pathParameters['id']!)),
         GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
       ],
     ),
