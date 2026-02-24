@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:seronium_flutter/constants/index.dart';
+import 'package:seronium_flutter/stores/TokenManager.dart';
 
 class Apiservice {
   static final Dio _dio = Dio();
@@ -32,6 +33,11 @@ class Apiservice {
   void _addInterceptors(){
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (request,handler){
+        if(tokenManager.getToken().isNotEmpty){
+          request.headers = {
+          "Authorization":"Bearer ${tokenManager.getToken()}",
+        };
+        }
         handler.next(request); 
       },
       onResponse: (response,handler){

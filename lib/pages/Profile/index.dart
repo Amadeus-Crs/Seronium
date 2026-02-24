@@ -12,7 +12,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final Usercontroller _userController = Get.put(Usercontroller());
+  final Usercontroller _userController = Get.find();
   bool loading = false;
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Center(
                     child: Column(
                       children: [
-                        CircleAvatar(radius: 50, backgroundColor: Colors.blue.shade100),
+                        CircleAvatar(radius: 50, backgroundColor: Colors.blue.shade100, backgroundImage: _userController.user.value.avatarUrl.isNotEmpty?NetworkImage(_userController.user.value.avatarUrl):NetworkImage("http://localhost:9000/seronium/2026/9b1b7af6-706c-42b8-ae01-1c7e46a1174d.png")),
                         const SizedBox(height: 16),
                         Text(_userController.user.value.username, style: Theme.of(context).textTheme.headlineMedium),
                         Text(_userController.user.value.bio, style: Theme.of(context).textTheme.bodyLarge),

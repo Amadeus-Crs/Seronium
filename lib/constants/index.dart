@@ -2,6 +2,7 @@ class GlobalConstants{
   static const String BASE_URL = "http://127.0.0.1:8080";
   static const int TIME_OUT=10;
   static const String SUCCESS_CODE="1";
+  static const String TOKEN_KEY="token";
 }
 
 class HTTPConstants{

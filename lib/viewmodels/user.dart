@@ -2,21 +2,24 @@ class User {
   final int id;
   final String username;
   final String bio;
-  final String? avatarUrl;
+  final String avatarUrl;
+  final String token;
 
   User({
     required this.id,
     required this.username,
     required this.bio,
-    this.avatarUrl,
+    required this.avatarUrl,
+    required this.token,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id']??'',
-      username: json['username']??'',
-      bio: json['bio'] ?? '',
-      avatarUrl: json['avatar_url']??'',
+      id: json['ID']??'',
+      username: json['Username']??'',
+      bio: json['Bio'] ?? '',
+      avatarUrl: json['AvatarURL']??'',
+      token: json['token']??'',
     );
   }
 }

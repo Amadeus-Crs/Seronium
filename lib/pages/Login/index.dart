@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seronium_flutter/api/login.dart';
+import 'package:seronium_flutter/stores/TokenManager.dart';
 import 'package:seronium_flutter/stores/UserController.dart';
 import 'package:seronium_flutter/utils/SQLInjectionPattern.dart';
 import 'package:seronium_flutter/utils/ToastUtils.dart';
@@ -79,6 +80,7 @@ _login()async{
     "password":_passwordController.text
   });
   _usercontroller.updateUser(res);
+  tokenManager.setToken(res.token);
   ToastUtils.showToast(context, "登录成功");
   context.go('/home');
   }catch(e){
