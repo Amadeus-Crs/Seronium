@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:seronium_flutter/pages/Login/index.dart';
-import 'package:seronium_flutter/pages/Main/index.dart';
-import 'package:seronium_flutter/pages/Post/create.dart';
-import 'package:seronium_flutter/pages/Post/detail.dart';
+
 
 final router = GoRouter(
   initialLocation: '/home',
   routes: [
-    GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+    GoRoute(path: '/login', builder: (_, __) =>  LoginScreen()),
+    GoRoute(path:'/joke', builder: (_, __) => const JokeScreen()),
     ShellRoute(
       builder: (context, state, child) => HomeShell(child: child),
       routes: [
@@ -71,6 +70,12 @@ class HomeShell extends StatelessWidget {
   void _onNavTap(BuildContext context, int index) {
     if (index == 0) context.go('/home');
     if (index == 1) context.go('/create');
-    if (index == 2) context.go('/profile');
+    if (index == 2) {
+      if(Token!=null){
+        context.go('/profile');
+      }else{
+        context.go('/login');
+      };
   }
+}
 }
