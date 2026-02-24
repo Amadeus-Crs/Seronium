@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:go_router/go_router.dart';
+import 'package:seronium_flutter/api/login.dart';
 import 'package:seronium_flutter/utils/SQLInjectionPattern.dart';
 import 'package:seronium_flutter/utils/ToastUtils.dart';
 
@@ -67,7 +69,18 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
+_login()async{
+  try{
+    await LoginAPI({
+    "account":_accountController.text,
+    "password":_passwordController.text
+  });
+  ToastUtils.showToast(context, "登录成功");
+  context.go('/home');
+  }catch(e){
+    ToastUtils.showToast(context, (e as DioException).message ?? "登录失败");
+  }
+}
   Widget _buildLoginButton() {
     return SizedBox(
       width: double.infinity,
@@ -76,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           if (_formKey.currentState!.validate()) {
             if(_isChecked){
-              context.go('/home');
+              _login();
             }else{
               ToastUtils.showToast(context,"请同意隐私政策和用户协议");
             }
@@ -142,10 +155,18 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Padding(
           padding: EdgeInsets.only(left: 10),
-          child: Text(
+          child: Column(
+            children: [
+              Text(
             "账号密码登录",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
+            ),
+            SizedBox(height: 10),
+            Text("用户不存在将自动创建",
+            style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            ],
+          )
         ),
       ],
     );

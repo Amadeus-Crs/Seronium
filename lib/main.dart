@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:seronium_flutter/routes/index.dart';
-import 'package:seronium_flutter/viewmodels/index.dart';
+import 'package:seronium_flutter/utils/Theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

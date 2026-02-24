@@ -5,8 +5,8 @@ class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-    fontFamily: GoogleFonts.notoSansSc().fontFamily,   // 已修正
-    cardTheme: CardThemeData(                        // 已修正
+    fontFamily: GoogleFonts.notoSansSc().fontFamily,
+    cardTheme: CardThemeData(
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
