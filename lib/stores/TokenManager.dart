@@ -16,7 +16,7 @@ class TokenManager {
     await prefs.setString(GlobalConstants.TOKEN_KEY, val);
     _token = val;
   }
-  getToken(){
+  String getToken(){
     return _token;
   }
   Future<void> removeToken()async{

@@ -3,7 +3,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:seronium_flutter/api/login.dart';
+import 'package:seronium_flutter/api/user.dart';
 import 'package:seronium_flutter/api/post.dart';
 import 'package:seronium_flutter/pages/Home/postcard.dart';
 import 'package:seronium_flutter/stores/TokenManager.dart';
@@ -18,15 +18,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Post> posts = [];
-  bool loading = true;
+//   List<Post> posts = [];
+//   bool loading = true;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _initUser();
-    _loadPosts();
-
+    // _loadPosts();
   }
   final Usercontroller _userController = Get.put(Usercontroller());
   _initUser() async {
@@ -41,31 +40,31 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Future<void> _loadPosts() async {
-    setState(() => loading = true);
-    try {
-      final posts = await GetPostListAPI(sort: "hot");
-    } catch (e) {
-      // ignore
-    }
-    setState(() => loading = false);
-  }
+// Future<void> _loadPosts() async {
+//     setState(() => loading = true);
+//     try {
+//       final posts = await GetPostListAPI(sort: "hot");
+//     } catch (e) {
+//       // ignore
+//     }
+//     setState(() => loading = false);
+//   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Seronium'), actions: [
         IconButton(icon: const Icon(Icons.search), onPressed: () {}),
       ]),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
-              onRefresh: _loadPosts,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: posts.length,
-                itemBuilder: (context, index) => PostCard(post: posts[index]),
-              ),
-            ),
+      // body: loading
+      //     ? const Center(child: CircularProgressIndicator())
+      //     : RefreshIndicator(
+      //         onRefresh: _loadPosts,
+      //         child: ListView.builder(
+      //           padding: const EdgeInsets.all(16),
+      //           itemCount: posts.length,
+      //           itemBuilder: (context, index) => PostCard(post: posts[index]),
+      //         ),
+      //       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.go('/create'),
         icon: const Icon(Icons.edit),
@@ -74,3 +73,14 @@ Future<void> _loadPosts() async {
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+
+// class HomeScreen extends StatelessWidget {
+//   const HomeScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(child: Text("Home Screen"));
+//   }
+// }

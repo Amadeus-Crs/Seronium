@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:go_router/go_router.dart';
-import 'package:seronium_flutter/api/login.dart';
+import 'package:seronium_flutter/api/user.dart';
 import 'package:seronium_flutter/stores/TokenManager.dart';
 import 'package:seronium_flutter/stores/UserController.dart';
 import 'package:seronium_flutter/utils/Joke.dart';
@@ -11,198 +12,209 @@ import 'package:seronium_flutter/utils/SQLInjectionPattern.dart';
 import 'package:seronium_flutter/utils/ToastUtils.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController _accountController = TextEditingController(); 
-  TextEditingController _passwordController = TextEditingController(); 
+  final _formKey = GlobalKey<FormState>();
+  final _accountController = TextEditingController();
+  final _passwordController = TextEditingController();
+
   final Usercontroller _usercontroller = Get.find();
-  Widget _buildAccountTextField() {
-    return TextFormField(
-      validator: (value){
-        if(value==null||value.isEmpty){
-          return "帐号不能为空";
-        }
-        if(!isSafeInput(value)){
-        return " 不要尝试SQL注入";
-        }
-        return null;
-        
-      },
-      
-      controller: _accountController,
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(left: 20), 
-        hintText: "请输入账号",
-        fillColor: const Color.fromRGBO(243, 243, 243, 1),
-        filled: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(25),
+
+  bool _isChecked = false;
+  bool _isLoading = false;
+
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (!_isChecked) {
+      ToastUtils.showToast(context, "请同意隐私政策和用户协议");
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final res = await LoginAPI({
+        "account": _accountController.text.trim(),
+        "password": _passwordController.text.trim(),
+      });
+
+      _usercontroller.updateUser(res);
+      tokenManager.setToken(res.token);
+
+      ToastUtils.showToast(context, "登录成功");
+      context.go('/home');
+    } catch (e) {
+      ToastUtils.showToast(context, (e as DioException).message ?? "登录失败");
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _accountController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("登录", style: TextStyle(fontWeight: FontWeight.w600)),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 48),
+                _buildAccountTextField(),
+                const SizedBox(height: 20),
+                _buildPasswordTextField(),
+                const SizedBox(height: 28),
+                _buildCheckbox(),
+                const SizedBox(height: 40),
+                _buildLoginButton(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "欢迎回来",
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          "用户不存在将自动创建账号",
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAccountTextField() {
+    return TextFormField(
+      controller: _accountController,
+      validator: (value) {
+        if (value == null || value.isEmpty) return "账号不能为空";
+        if (!isSafeInput(value)) return "请勿尝试 SQL 注入";
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: "请输入账号",
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(28),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+      ),
+    );
+  }
 
   Widget _buildPasswordTextField() {
     return TextFormField(
-      validator: (value){
-        if(value==null||value.isEmpty){
-          return "密码不能为空";
-        }
-        if(!RegExp(r"^[a-zA-Z0-9_@#\$%\^&\+=]{6,20}$").hasMatch(value)){
+      controller: _passwordController,
+      obscureText: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) return "密码不能为空";
+        if (!RegExp(r"^[a-zA-Z0-9_@#\$%\^&\+=]{6,20}$").hasMatch(value)) {
           return "密码必须是6-20位的字母、数字或特殊字符";
         }
         return null;
       },
-      controller: _passwordController,
-      obscureText: true,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.only(left: 20), 
         hintText: "请输入密码",
-        fillColor: const Color.fromRGBO(243, 243, 243, 1),
         filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
         border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(28),
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(25),
         ),
-      ),
-    );
-  }
-_login()async{
-  try{
-    final res = await LoginAPI({
-    "account":_accountController.text,
-    "password":_passwordController.text
-  });
-  _usercontroller.updateUser(res);
-  tokenManager.setToken(res.token);
-  ToastUtils.showToast(context, "登录成功");
-  context.go('/home');
-  }catch(e){
-    ToastUtils.showToast(context, (e as DioException).message ?? "登录失败");
-  }
-}
-  Widget _buildLoginButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: ElevatedButton(
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            if(_isChecked){
-              _login();
-            }else{
-              ToastUtils.showToast(context,"请同意隐私政策和用户协议");
-            }
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-          ),
-        ),
-        child: Text("登录", style: TextStyle(fontSize: 18, color: Colors.white)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       ),
     );
   }
 
-  bool _isChecked = false;
   Widget _buildCheckbox() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Checkbox(
           value: _isChecked,
           activeColor: Colors.black,
           checkColor: Colors.white,
-          onChanged: (bool? value) {
-            _isChecked = value ?? false;
-            setState(() {});
-          },
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          side: BorderSide(color: Colors.grey, width: 2.0),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+          onChanged: (value) => setState(() => _isChecked = value ?? false),
         ),
-        Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: "查看并同意"),
-              TextSpan(
-                text: "《隐私政策》",
-                style: TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()..onTap = JokeURL
-              ),
-              
-              TextSpan(text: "和"),
-              TextSpan(
-                text: "《用户协议》",
-                style: TextStyle(color: Colors.blue),
-                recognizer: TapGestureRecognizer()..onTap = JokeURL
-              ),
-            ],
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                const TextSpan(text: "我已阅读并同意 "),
+                TextSpan(
+                  text: "《隐私政策》",
+                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+                  recognizer: TapGestureRecognizer()..onTap = JokeURL,
+                ),
+                const TextSpan(text: " 和 "),
+                TextSpan(
+                  text: "《用户协议》",
+                  style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+                  recognizer: TapGestureRecognizer()..onTap = JokeURL,
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildHeader() {
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 10),
-          child: Column(
-            children: [
-              Text(
-            "账号密码登录",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Text("用户不存在将自动创建",
-            style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            ],
-          )
+  Widget _buildLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: _isLoading ? null : _login,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          elevation: 2,
         ),
-      ],
-    );
-  }
-
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Login", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-      ),
-      body: Form(
-        key: _formKey,
-        child: Container(
-          padding: EdgeInsets.all(30),
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              _buildHeader(),
-              SizedBox(height: 30),
-              _buildAccountTextField(),
-              SizedBox(height: 20),
-              _buildPasswordTextField(),
-              SizedBox(height: 20),
-              _buildCheckbox(),
-              SizedBox(height: 20),
-              _buildLoginButton(),
-            ],
-          ),
-        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+              )
+            : const Text("登录", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
       ),
     );
   }
