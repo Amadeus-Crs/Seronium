@@ -48,6 +48,7 @@ class ApiService {
         handler.reject(DioException(requestOptions: response.requestOptions));
       },
       onError: (error,handler){
+        print("❌ 请求失败: ${error.response?.data}");
         handler.reject(DioException(requestOptions: error.requestOptions,message: error.response?.data['msg']??''));
       }
     ),);
@@ -55,3 +56,4 @@ class ApiService {
 }
 
 final apiService = ApiService();
+

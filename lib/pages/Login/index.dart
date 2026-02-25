@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final res = await LoginAPI({
-        "account": _accountController.text.trim(),
+        "username": _accountController.text.trim(),
         "password": _passwordController.text.trim(),
       });
 
@@ -48,6 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       ToastUtils.showToast(context, "登录成功");
       context.go('/home');
+      print("登录成功，当前路由: ${GoRouterState.of(context).uri}");
     } catch (e) {
       ToastUtils.showToast(context, (e as DioException).message ?? "登录失败");
     } finally {
@@ -127,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         hintText: "请输入账号",
         filled: true,
+        // ignore: deprecated_member_use
         fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(28),
@@ -151,6 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: InputDecoration(
         hintText: "请输入密码",
         filled: true,
+        // ignore: deprecated_member_use
         fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.6),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(28),

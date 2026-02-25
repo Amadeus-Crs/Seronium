@@ -32,7 +32,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Future<void> _publish() async {
-    // 调用后端 API
     await CreatePost({
         "title": _titleController.text,
       "content": _contentController.text,

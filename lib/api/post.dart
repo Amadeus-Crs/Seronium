@@ -12,7 +12,9 @@ GetPost(String postId)async{
 }
 
 Future<List<Post>> GetPostListAPI({String? sort = "new",offset =0,limit = 10})async{
-  return (await apiService.get(HTTPConstants.GET_POST_LIST,{'sort':sort,'offset':offset,'limit':limit}) as List).map((item){
+  final data = await apiService.get(HTTPConstants.GET_POST_LIST,{'sort':sort,'offset':offset,'limit':limit}) as List;
+  print("📡 获取到文章数量: ${data.length}");
+  return data.map((item){
     return Post.fromJson(item);
   }).toList();
 }
